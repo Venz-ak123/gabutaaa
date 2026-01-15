@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VENZXPLOIT - V5 FLOATING</title>
+    <style>
+        /* CORE STYLE */
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;800&family=Share+Tech+Mono&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+            height: 100vh;
+            width: 100vw;
+            touch-action: none;
+        }
+
+        /* CANVAS LAYER */
+        #esp-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 900;
+            pointer-events: none;
+        }
+
+        /* FLOATING ICON */
+        #float-icon {
+            position: fixed;
+            top: 20px; left: 20px;
+            width: 50px; height: 50px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ff003c;
+            border-radius: 50%;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
+            font-family: 'Share Tech Mono';
+            color: #ff003c;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #float-icon:active { transform: scale(0.9); background: #ff003c; color: #000; }
+
+        /* MOD MENU WINDOW */
+        #mod-menu {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 360px;
+            height: 320px;
+            background: rgba(10, 10, 10, 0.98);
+            border: 1px solid #ff003c;
+            border-radius: 4px;
+            display: none;
+            flex-direction: column;
+            z-index: 10001;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        /* HEADER */
+        .menu-header {
+            height: 40px;
+            background: linear-gradient(90deg, #111, #000);
+            border-bottom: 2px solid #ff003c;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .title {
+            font-family: 'Share Tech Mono';
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .title span { color: #ff003c; }
+
+        .btn-minimize {
+            width: 25px; height: 25px;
+            background: transparent;
+            color: #ff003c;
+            border: 1px solid #ff003c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* CONTENT SCROLL */
+        .menu-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            background: #050505;
+        }
+        
+        /* ACCORDION STYLE */
+        .category-btn {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0f0f0f;
+            color: #ccc;
+            border: none;
+            border-bottom: 1px solid #222;
+            text-align: left;
+            font-family: 'Share Tech Mono';
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            transition: 0.2s;
+        }
+        
+        .category-btn.active {
+            background: rgba(255, 0, 60, 0.1);
+            color: #ff003c;
+            border-left: 3px solid #ff003c;
+        }
+
+        .category-content {
+            display: none;
+            padding: 10px 15px;
+            background: #080808;
+            border-bottom: 1px solid #222;
+        }
+        
+        .category-content.show { display: block; }
+
+        /* FEATURE ITEMS */
+        .feature-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px dashed #222;
+        }
+
+        .feat-label { font-size: 14px; color: #ddd; }
+
+        /* SWITCH STYLE (NO EMOJI) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px; height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .3s;
+            border-radius: 2px; /* Kotak biar garang */
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px; width: 14px;
+            left: 3px; bottom: 3px;
+            background-color: #888;
+            transition: .3s;
+            border-radius: 2px;
+        }
+        input:checked + .slider { background-color: #ff003c; }
+        input:checked + .slider:before { transform: translateX(20px); background-color: #fff; }
+
+        /* SLIDERS */
+        .seek-container { width: 100%; margin-top: 5px; }
+        .seekbar {
+            -webkit-appearance: none;
+            width: 100%; height: 3px;
+            background: #333;
+            outline: none;
+        }
+        .seekbar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px; height: 12px;
+            background: #ff003c;
+            cursor: pointer;
+            border-radius: 0; /* Kotak */
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 50px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #ff003c;
+            padding: 8px 12px;
+            font-size: 10px;
+            border: 1px solid #ff003c;
+            font-family: 'Share Tech Mono';
+            display: none;
+            z-index: 20000;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 8px;
+            text-align: center;
+            font-size: 10px;
+            color: #555;
+            border-top: 1px solid #ff003c;
+            background: #000;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="esp-canvas"></canvas>
+    <div id="toast" class="toast">SYSTEM READY</div>
+
+    <!-- FLOATING ICON -->
+    <div id="float-icon">VZ</div>
+
+    <!-- MOD MENU -->
+    <div id="mod-menu">
+        <div class="menu-header" id="drag-header">
+            <div class="title">VENZ<span>XPLOIT</span> V5</div>
+            <div class="btn-minimize" id="btn-minimize">_</div>
+        </div>
+
+        <div class="menu-content">
+            
+            <!-- GROUP 1: AIM FEATURES -->
+            <button class="category-btn active" onclick="toggleCat('cat-aim')">
+                [ 01 ] AIMBOT FEATURES <span>>></span>
+            </button>
+            <div id="cat-aim" class="category-content show">
+                <div class="feature-item">
+                    <span class="feat-label">Aimlock</span>
+                    <label class="switch"><input type="checkbox" id="chk-aimlock" checked><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Auto Headshot</span>
+                    <label class="switch"><input type="checkbox" id="chk-headshot"><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Aim Assist</span>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Aim Fire Only</span>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div style="margin-top:5px">
+                    <div style="font-size:10px; color:#ff003c; display:flex; justify-content:space-between;">
+                        <span>FOV RADIUS</span> <span id="fov-txt">150</span>
+                    </div>
+                    <div class="seek-container">
+                        <input type="range" class="seekbar" min="0" max="360" value="150" id="slider-fov">
+                    </div>
+                </div>
+                <div style="margin-top:5px">
+                    <div style="font-size:10px; color:#ff003c; display:flex; justify-content:space-between;">
+                        <span>SMOOTHNESS</span> <span id="smooth-txt">5</span>
+                    </div>
+                    <div class="seek-container">
+                        <input type="range" class="seekbar" min="0" max="20" value="5" id="slider-smooth">
+                    </div>
+                </div>
+            </div>
+
+            <!-- GROUP 2: VISUAL ESP -->
+            <button class="category-btn" onclick="toggleCat('cat-esp')">
+                [ 02 ] VISUAL ESP <span>>></span>
+            </button>
+            <div id="cat-esp" class="category-content">
+                <div class="feature-item">
+                    <span class="feat-label">ESP Line</span>
+                    <label class="switch"><input type="checkbox" id="chk-esp-line" checked><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">ESP Box</span>
+                    <label class="switch"><input type="checkbox" id="chk-esp-box" checked><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">ESP Name</span>
+                    <label class="switch"><input type="checkbox" id="chk-esp-name" checked><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">ESP Skeleton</span>
+                    <label class="switch"><input type="checkbox" id="chk-esp-skel"><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">ESP Health</span>
+                    <label class="switch"><input type="checkbox" id="chk-esp-hp"><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">ESP 360 Alert</span>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <!-- GROUP 3: PLAYER MOD -->
+            <button class="category-btn" onclick="toggleCat('cat-player')">
+                [ 03 ] PLAYER MODS <span>>></span>
+            </button>
+            <div id="cat-player" class="category-content">
+                <div class="feature-item">
+                    <span class="feat-label">No Recoil</span>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Fast Reload</span>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Speed Run</span>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Fly Hack</span>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Ghost Mode</span>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <!-- GROUP 4: MISC SYSTEM -->
+            <button class="category-btn" onclick="toggleCat('cat-misc')">
+                [ 04 ] SYSTEM / MISC <span>>></span>
+            </button>
+            <div id="cat-misc" class="category-content">
+                <div class="feature-item">
+                    <span class="feat-label">Auto Login</span>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Clear Cache</span>
+                    <button style="background:#222; color:#fff; border:1px solid #555; font-size:10px; padding:2px 5px;">EXECUTE</button>
+                </div>
+                <div class="feature-item">
+                    <span class="feat-label">Reset Config</span>
+                    <button style="background:#222; color:#ff003c; border:1px solid #ff003c; font-size:10px; padding:2px 5px;">RESET</button>
+                </div>
+                <div style="font-size:10px; color:#555; margin-top:5px;">
+                    DEVICE: ROG PHONE 8 PRO<br>
+                    ROOT: GRANTED
+                </div>
+            </div>
+
+        </div>
+        <div class="footer">
+            VENZ-VIP-5.0.1 | STATUS: UNDETECTED
+        </div>
+    </div>
+
+    <script>
+        // --- UI SYSTEM ---
+        const floatIcon = document.getElementById('float-icon');
+        const modMenu = document.getElementById('mod-menu');
+        const btnMin = document.getElementById('btn-minimize');
+        const toast = document.getElementById('toast');
+
+        // Toggle Logic
+        floatIcon.addEventListener('click', () => {
+            modMenu.style.display = 'flex';
+            floatIcon.style.display = 'none';
+        });
+
+        btnMin.addEventListener('click', () => {
+            modMenu.style.display = 'none';
+            floatIcon.style.display = 'flex';
+        });
+
+        // Accordion Logic
+        function toggleCat(id) {
+            // Close all
+            document.querySelectorAll('.category-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.category-btn').forEach(el => el.classList.remove('active'));
+            
+            // Open target
+            document.getElementById(id).classList.add('show');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Toast System
+        function showToast(msg) {
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
+        }
+
+        // Checkbox Listener
+        document.querySelectorAll('input[type=checkbox]').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const label = this.closest('.feature-item').querySelector('.feat-label').innerText;
+                const status = this.checked ? "ENABLED" : "DISABLED";
+                showToast(label + ": " + status);
+            });
+        });
+
+        // Sliders
+        document.getElementById('slider-fov').addEventListener('input', function() {
+            document.getElementById('fov-txt').innerText = this.value;
+        });
+        document.getElementById('slider-smooth').addEventListener('input', function() {
+            document.getElementById('smooth-txt').innerText = this.value;
+        });
+
+        // --- DRAG SYSTEM ---
+        function makeDraggable(element, handle) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const dragHandle = handle || element;
+
+            dragHandle.onmousedown = dragStart;
+            dragHandle.ontouchstart = dragStart;
+
+            function dragStart(e) {
+                if (e.type === 'touchstart') {
+                    pos3 = e.touches[0].clientX;
+                    pos4 = e.touches[0].clientY;
+                } else {
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                }
+                document.onmouseup = closeDrag;
+                document.ontouchend = closeDrag;
+                document.onmousemove = elementDrag;
+                document.ontouchmove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                let clientX, clientY;
+                if (e.type === 'touchmove') {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+                pos1 = pos3 - clientX;
+                pos2 = pos4 - clientY;
+                pos3 = clientX;
+                pos4 = clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+                element.style.transform = "none";
+            }
+
+            function closeDrag() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+            }
+        }
+
+        makeDraggable(floatIcon);
+        makeDraggable(modMenu, document.getElementById('drag-header'));
+
+
+        // --- ESP SIMULATION LOOP ---
+        const canvas = document.getElementById('esp-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Enemies
+        const enemies = Array.from({length: 5}, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            hp: 100
+        }));
+
+        function loop() {
+            ctx.clearRect(0, 0, width, height);
+
+            const showLine = document.getElementById('chk-esp-line').checked;
+            const showBox = document.getElementById('chk-esp-box').checked;
+            const showName = document.getElementById('chk-esp-name').checked;
+            const showSkel = document.getElementById('chk-esp-skel').checked;
+            const showHp = document.getElementById('chk-esp-hp').checked;
+            const aimlock = document.getElementById('chk-aimlock').checked;
+            const fov = parseInt(document.getElementById('slider-fov').value);
+            
+            const cx = width / 2;
+            const cy = height / 2;
+
+            // FOV
+            ctx.beginPath();
+            ctx.arc(cx, cy, fov, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.stroke();
+
+            let closest = null;
+            let minDist = fov;
+
+            enemies.forEach((e, i) => {
+                e.x += e.vx; e.y += e.vy;
+                if(e.x < 0 || e.x > width) e.vx *= -1;
+                if(e.y < 0 || e.y > height) e.vy *= -1;
+
+                const dist = Math.hypot(e.x - cx, e.y - cy);
+
+                // ESP Renders
+                if(showBox) {
+                    ctx.strokeStyle = "#0f0";
+                    ctx.strokeRect(e.x - 20, e.y - 40, 40, 80);
+                }
+                if(showLine) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx, 0);
+                    ctx.lineTo(e.x, e.y - 40);
+                    ctx.strokeStyle = "#0f0";
+                    ctx.stroke();
+                }
+                if(showName) {
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "10px monospace";
+                    ctx.fillText(`ENEMY_${i} [${Math.floor(dist)}m]`, e.x - 30, e.y + 50);
+                }
+                if(showSkel) {
+                    // Fake Skeleton
+                    ctx.strokeStyle = "#fff";
+                    ctx.beginPath();
+                    ctx.moveTo(e.x, e.y - 30); ctx.lineTo(e.x, e.y + 10); // spine
+                    ctx.moveTo(e.x - 10, e.y - 10); ctx.lineTo(e.x + 10, e.y - 10); // arms
+                    ctx.moveTo(e.x, e.y + 10); ctx.lineTo(e.x - 10, e.y + 30); // leg L
+                    ctx.moveTo(e.x, e.y + 10); ctx.lineTo(e.x + 10, e.y + 30); // leg R
+                    ctx.stroke();
+                }
+                if(showHp) {
+                    ctx.fillStyle = "#0f0";
+                    ctx.fillText(`HP: ${e.hp}`, e.x - 20, e.y - 45);
+                }
+
+                if(dist < minDist) {
+                    minDist = dist;
+                    closest = e;
+                }
+            });
+
+            // Aimlock Logic
+            if(aimlock && closest) {
+                ctx.strokeStyle = "#ff003c";
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(closest.x, closest.y - 20); // Head
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(loop);
+        }
+        loop();
+
+    </script>
+</body>
+</html>
