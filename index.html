@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VENZXPLOIT - V5 FLOATING</title>
+    <title>VENZXPLOIT - V5 FULL PANEL</title>
     <style>
         /* CORE STYLE */
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;800&family=Share+Tech+Mono&display=swap');
@@ -18,25 +18,21 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: transparent;
+            background-color: #000; /* Solid Black Background */
             overflow: hidden;
             font-family: 'Rajdhani', sans-serif;
             color: #fff;
             height: 100vh;
             width: 100vw;
             touch-action: none;
+            /* Hacker Grid Background */
+            background-image: 
+                linear-gradient(rgba(255, 0, 60, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 60, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        /* CANVAS LAYER */
-        #esp-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 900;
-            pointer-events: none;
-        }
-
-        /* FLOATING ICON */
+        /* FLOATING ICON (Tetap ada buat buka menu) */
         #float-icon {
             position: fixed;
             top: 20px; left: 20px;
@@ -45,7 +41,7 @@
             border: 2px solid #ff003c;
             border-radius: 50%;
             z-index: 10000;
-            display: flex;
+            display: none; /* Hidden default (Menu open first) */
             justify-content: center;
             align-items: center;
             box-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
@@ -59,45 +55,42 @@
 
         #float-icon:active { transform: scale(0.9); background: #ff003c; color: #000; }
 
-        /* MOD MENU WINDOW */
+        /* MOD MENU WINDOW - FULL SCREEN */
         #mod-menu {
             position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 360px;
-            height: 320px;
-            background: rgba(10, 10, 10, 0.98);
-            border: 1px solid #ff003c;
-            border-radius: 4px;
-            display: none;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.98);
+            display: flex;
             flex-direction: column;
             z-index: 10001;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
-            overflow: hidden;
+            /* No border radius for full screen */
             backdrop-filter: blur(5px);
         }
 
         /* HEADER */
         .menu-header {
-            height: 40px;
-            background: linear-gradient(90deg, #111, #000);
+            height: 60px; /* Lebih besar */
+            background: linear-gradient(90deg, #000, #1a0005);
             border-bottom: 2px solid #ff003c;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 10px;
+            padding: 0 20px;
         }
 
         .title {
             font-family: 'Share Tech Mono';
             color: #fff;
-            font-size: 14px;
-            letter-spacing: 1px;
+            font-size: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #ff003c;
         }
         .title span { color: #ff003c; }
 
         .btn-minimize {
-            width: 25px; height: 25px;
+            width: 35px; height: 35px;
             background: transparent;
             color: #ff003c;
             border: 1px solid #ff003c;
@@ -105,47 +98,53 @@
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 18px;
             cursor: pointer;
+            transition: 0.2s;
         }
+        .btn-minimize:hover { background: #ff003c; color: #000; }
 
         /* CONTENT SCROLL */
         .menu-content {
             flex: 1;
             overflow-y: auto;
-            padding: 0;
-            background: #050505;
+            padding: 10px;
+            background: transparent;
         }
         
         /* ACCORDION STYLE */
         .category-btn {
             width: 100%;
-            padding: 12px 15px;
+            padding: 15px 20px;
             background: #0f0f0f;
             color: #ccc;
             border: none;
+            border-left: 4px solid #333;
             border-bottom: 1px solid #222;
             text-align: left;
             font-family: 'Share Tech Mono';
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
+            margin-bottom: 5px;
             transition: 0.2s;
         }
         
         .category-btn.active {
-            background: rgba(255, 0, 60, 0.1);
+            background: rgba(255, 0, 60, 0.05);
             color: #ff003c;
-            border-left: 3px solid #ff003c;
+            border-left: 4px solid #ff003c;
+            box-shadow: 0 0 15px rgba(255,0,60,0.1);
         }
 
         .category-content {
             display: none;
-            padding: 10px 15px;
+            padding: 10px 20px;
             background: #080808;
-            border-bottom: 1px solid #222;
+            border: 1px solid #222;
+            margin-bottom: 10px;
         }
         
         .category-content.show { display: block; }
@@ -155,94 +154,112 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            padding: 5px 0;
+            margin-bottom: 12px;
+            padding: 8px 0;
             border-bottom: 1px dashed #222;
         }
 
-        .feat-label { font-size: 14px; color: #ddd; }
+        .feat-label { font-size: 16px; color: #eee; font-weight: 500; }
 
         /* SWITCH STYLE (NO EMOJI) */
         .switch {
             position: relative;
             display: inline-block;
-            width: 40px; height: 20px;
+            width: 50px; height: 24px;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute;
             cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333;
+            background-color: #222;
             transition: .3s;
-            border-radius: 2px; /* Kotak biar garang */
+            border: 1px solid #444;
+            border-radius: 2px;
         }
         .slider:before {
             position: absolute;
             content: "";
-            height: 14px; width: 14px;
+            height: 16px; width: 16px;
             left: 3px; bottom: 3px;
-            background-color: #888;
+            background-color: #666;
             transition: .3s;
             border-radius: 2px;
         }
-        input:checked + .slider { background-color: #ff003c; }
-        input:checked + .slider:before { transform: translateX(20px); background-color: #fff; }
+        input:checked + .slider { background-color: rgba(255, 0, 60, 0.2); border-color: #ff003c; }
+        input:checked + .slider:before { transform: translateX(26px); background-color: #ff003c; box-shadow: 0 0 5px #ff003c; }
 
         /* SLIDERS */
-        .seek-container { width: 100%; margin-top: 5px; }
+        .seek-container { width: 100%; margin-top: 8px; }
         .seekbar {
             -webkit-appearance: none;
-            width: 100%; height: 3px;
-            background: #333;
+            width: 100%; height: 4px;
+            background: #222;
             outline: none;
+            border-radius: 2px;
         }
         .seekbar::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 12px; height: 12px;
+            width: 16px; height: 16px;
             background: #ff003c;
             cursor: pointer;
-            border-radius: 0; /* Kotak */
+            border-radius: 0;
+            border: 1px solid #000;
         }
 
         /* TOAST */
         .toast {
             position: fixed;
-            bottom: 50px; left: 50%;
+            bottom: 60px; left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.9);
             color: #ff003c;
-            padding: 8px 12px;
-            font-size: 10px;
+            padding: 10px 20px;
+            font-size: 12px;
             border: 1px solid #ff003c;
             font-family: 'Share Tech Mono';
             display: none;
             z-index: 20000;
+            box-shadow: 0 0 15px rgba(255,0,60,0.2);
         }
 
         /* FOOTER */
         .footer {
-            padding: 8px;
+            padding: 15px;
             text-align: center;
-            font-size: 10px;
+            font-size: 12px;
             color: #555;
             border-top: 1px solid #ff003c;
-            background: #000;
+            background: #050505;
+            font-family: 'Share Tech Mono';
         }
+
+        /* ACTION BUTTONS */
+        .btn-action {
+            background: linear-gradient(45deg, #222, #333);
+            color: #fff;
+            border: 1px solid #555;
+            padding: 5px 15px;
+            font-size: 12px;
+            font-family: 'Share Tech Mono';
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-action:active { transform: scale(0.95); }
+        .btn-reset { color: #ff003c; border-color: #ff003c; background: rgba(255,0,60,0.1); }
 
     </style>
 </head>
 <body>
 
-    <canvas id="esp-canvas"></canvas>
     <div id="toast" class="toast">SYSTEM READY</div>
 
-    <!-- FLOATING ICON -->
+    <!-- FLOATING ICON (Untuk Membuka Kembali Menu) -->
     <div id="float-icon">VZ</div>
 
-    <!-- MOD MENU -->
+    <!-- MOD MENU - FULL SCREEN -->
     <div id="mod-menu">
-        <div class="menu-header" id="drag-header">
+        <div class="menu-header">
             <div class="title">VENZ<span>XPLOIT</span> V5</div>
             <div class="btn-minimize" id="btn-minimize">_</div>
         </div>
@@ -251,7 +268,7 @@
             
             <!-- GROUP 1: AIM FEATURES -->
             <button class="category-btn active" onclick="toggleCat('cat-aim')">
-                [ 01 ] AIMBOT FEATURES <span>>></span>
+                [ 01 ] AIMBOT CONFIGURATION <span>>></span>
             </button>
             <div id="cat-aim" class="category-content show">
                 <div class="feature-item">
@@ -270,16 +287,16 @@
                     <span class="feat-label">Aim Fire Only</span>
                     <label class="switch"><input type="checkbox"><span class="slider"></span></label>
                 </div>
-                <div style="margin-top:5px">
-                    <div style="font-size:10px; color:#ff003c; display:flex; justify-content:space-between;">
+                <div style="margin-top:10px">
+                    <div style="font-size:12px; color:#ff003c; display:flex; justify-content:space-between; font-family:'Share Tech Mono'">
                         <span>FOV RADIUS</span> <span id="fov-txt">150</span>
                     </div>
                     <div class="seek-container">
                         <input type="range" class="seekbar" min="0" max="360" value="150" id="slider-fov">
                     </div>
                 </div>
-                <div style="margin-top:5px">
-                    <div style="font-size:10px; color:#ff003c; display:flex; justify-content:space-between;">
+                <div style="margin-top:10px">
+                    <div style="font-size:12px; color:#ff003c; display:flex; justify-content:space-between; font-family:'Share Tech Mono'">
                         <span>SMOOTHNESS</span> <span id="smooth-txt">5</span>
                     </div>
                     <div class="seek-container">
@@ -288,7 +305,7 @@
                 </div>
             </div>
 
-            <!-- GROUP 2: VISUAL ESP -->
+            <!-- GROUP 2: VISUAL ESP (UI Only) -->
             <button class="category-btn" onclick="toggleCat('cat-esp')">
                 [ 02 ] VISUAL ESP <span>>></span>
             </button>
@@ -321,7 +338,7 @@
 
             <!-- GROUP 3: PLAYER MOD -->
             <button class="category-btn" onclick="toggleCat('cat-player')">
-                [ 03 ] PLAYER MODS <span>>></span>
+                [ 03 ] PLAYER MODIFICATIONS <span>>></span>
             </button>
             <div id="cat-player" class="category-content">
                 <div class="feature-item">
@@ -357,21 +374,22 @@
                 </div>
                 <div class="feature-item">
                     <span class="feat-label">Clear Cache</span>
-                    <button style="background:#222; color:#fff; border:1px solid #555; font-size:10px; padding:2px 5px;">EXECUTE</button>
+                    <button class="btn-action">EXECUTE</button>
                 </div>
                 <div class="feature-item">
                     <span class="feat-label">Reset Config</span>
-                    <button style="background:#222; color:#ff003c; border:1px solid #ff003c; font-size:10px; padding:2px 5px;">RESET</button>
+                    <button class="btn-action btn-reset">RESET</button>
                 </div>
-                <div style="font-size:10px; color:#555; margin-top:5px;">
-                    DEVICE: ROG PHONE 8 PRO<br>
-                    ROOT: GRANTED
+                <div style="font-size:12px; color:#555; margin-top:10px; font-family:'Share Tech Mono'">
+                    DEVICE ID: ROG-8-PRO-X1<br>
+                    ROOT STATUS: GRANTED<br>
+                    INJECTOR: ACTIVE
                 </div>
             </div>
 
         </div>
         <div class="footer">
-            VENZ-VIP-5.0.1 | STATUS: UNDETECTED
+            VENZ-VIP-5.0.1 | STATUS: UNDETECTED | FULL PANEL MODE
         </div>
     </div>
 
@@ -428,13 +446,12 @@
             document.getElementById('smooth-txt').innerText = this.value;
         });
 
-        // --- DRAG SYSTEM ---
-        function makeDraggable(element, handle) {
+        // --- DRAG SYSTEM FOR ICON ONLY ---
+        function makeDraggable(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            const dragHandle = handle || element;
-
-            dragHandle.onmousedown = dragStart;
-            dragHandle.ontouchstart = dragStart;
+            
+            element.onmousedown = dragStart;
+            element.ontouchstart = dragStart;
 
             function dragStart(e) {
                 if (e.type === 'touchstart') {
@@ -465,7 +482,6 @@
                 pos4 = clientY;
                 element.style.top = (element.offsetTop - pos2) + "px";
                 element.style.left = (element.offsetLeft - pos1) + "px";
-                element.style.transform = "none";
             }
 
             function closeDrag() {
@@ -477,112 +493,9 @@
         }
 
         makeDraggable(floatIcon);
-        makeDraggable(modMenu, document.getElementById('drag-header'));
 
-
-        // --- ESP SIMULATION LOOP ---
-        const canvas = document.getElementById('esp-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Enemies
-        const enemies = Array.from({length: 5}, () => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            vx: (Math.random() - 0.5) * 2,
-            vy: (Math.random() - 0.5) * 2,
-            hp: 100
-        }));
-
-        function loop() {
-            ctx.clearRect(0, 0, width, height);
-
-            const showLine = document.getElementById('chk-esp-line').checked;
-            const showBox = document.getElementById('chk-esp-box').checked;
-            const showName = document.getElementById('chk-esp-name').checked;
-            const showSkel = document.getElementById('chk-esp-skel').checked;
-            const showHp = document.getElementById('chk-esp-hp').checked;
-            const aimlock = document.getElementById('chk-aimlock').checked;
-            const fov = parseInt(document.getElementById('slider-fov').value);
-            
-            const cx = width / 2;
-            const cy = height / 2;
-
-            // FOV
-            ctx.beginPath();
-            ctx.arc(cx, cy, fov, 0, Math.PI * 2);
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-            ctx.stroke();
-
-            let closest = null;
-            let minDist = fov;
-
-            enemies.forEach((e, i) => {
-                e.x += e.vx; e.y += e.vy;
-                if(e.x < 0 || e.x > width) e.vx *= -1;
-                if(e.y < 0 || e.y > height) e.vy *= -1;
-
-                const dist = Math.hypot(e.x - cx, e.y - cy);
-
-                // ESP Renders
-                if(showBox) {
-                    ctx.strokeStyle = "#0f0";
-                    ctx.strokeRect(e.x - 20, e.y - 40, 40, 80);
-                }
-                if(showLine) {
-                    ctx.beginPath();
-                    ctx.moveTo(cx, 0);
-                    ctx.lineTo(e.x, e.y - 40);
-                    ctx.strokeStyle = "#0f0";
-                    ctx.stroke();
-                }
-                if(showName) {
-                    ctx.fillStyle = "#fff";
-                    ctx.font = "10px monospace";
-                    ctx.fillText(`ENEMY_${i} [${Math.floor(dist)}m]`, e.x - 30, e.y + 50);
-                }
-                if(showSkel) {
-                    // Fake Skeleton
-                    ctx.strokeStyle = "#fff";
-                    ctx.beginPath();
-                    ctx.moveTo(e.x, e.y - 30); ctx.lineTo(e.x, e.y + 10); // spine
-                    ctx.moveTo(e.x - 10, e.y - 10); ctx.lineTo(e.x + 10, e.y - 10); // arms
-                    ctx.moveTo(e.x, e.y + 10); ctx.lineTo(e.x - 10, e.y + 30); // leg L
-                    ctx.moveTo(e.x, e.y + 10); ctx.lineTo(e.x + 10, e.y + 30); // leg R
-                    ctx.stroke();
-                }
-                if(showHp) {
-                    ctx.fillStyle = "#0f0";
-                    ctx.fillText(`HP: ${e.hp}`, e.x - 20, e.y - 45);
-                }
-
-                if(dist < minDist) {
-                    minDist = dist;
-                    closest = e;
-                }
-            });
-
-            // Aimlock Logic
-            if(aimlock && closest) {
-                ctx.strokeStyle = "#ff003c";
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(closest.x, closest.y - 20); // Head
-                ctx.stroke();
-            }
-
-            requestAnimationFrame(loop);
-        }
-        loop();
+        // --- NO SIMULATION LOOP (CLEAN) ---
+        // Just UI logic here.
 
     </script>
 </body>
